@@ -5,8 +5,6 @@
 ![GitHub issues](https://img.shields.io/github/issues/skarfie123/FolderCompare)
 ![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)
 
-[![Example Image](https://i.imgur.com/ZgY1SOS.png)](https://rahulpaicreations.github.io/blender/rpc-anim)
-
 ## Usage
 
 `python FolderCompare.py path\to\source path\to\destination`
