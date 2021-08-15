@@ -11,7 +11,7 @@
 
 ## Build
 
-`pyinstaller FolderCompare.spec`
+`pyinstaller --onefile FolderCompare.py`
 
 ## Installation
 
