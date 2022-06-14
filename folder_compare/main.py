@@ -99,7 +99,7 @@ def main(args):
         print("\nWrote to file:", args.output_file)
 
 
-if __name__ == "__main__":
+def cli():
     parser = argparse.ArgumentParser("FolderCompare")
     parser.add_argument("source", help="target file structure")
     parser.add_argument("destination", help="current file structure")
@@ -111,3 +111,7 @@ if __name__ == "__main__":
         nargs="?",
     )
     main(parser.parse_args())
+
+
+if __name__ == "__main__":
+    cli()
