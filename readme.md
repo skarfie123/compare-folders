@@ -7,11 +7,11 @@
 
 ## Installation
 
-`pipx install folder-compare`
+`pipx install compare-folders`
 
 ## Usage
 
-`folder-compare path\to\source path\to\destination`
+`compare-folders path\to\source path\to\destination`
 
 This will write a markdown file with:
 
