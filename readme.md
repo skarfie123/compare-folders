@@ -1,8 +1,7 @@
 # FolderCompare
 
-![GitHub release (latest by date)](https://img.shields.io/github/v/release/skarfie123/FolderCompare)
-![GitHub all releases](https://img.shields.io/github/downloads/skarfie123/FolderCompare/total)
-![GitHub issues](https://img.shields.io/github/issues/skarfie123/FolderCompare)
+![PyPI version](https://img.shields.io/pypi/v/compare-folders)
+![PyPI downloads](https://img.shields.io/pypi/dm/compare-folders)
 ![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)
 
 ## Installation

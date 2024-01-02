@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "compare-folders"
-version = "3.0.0"
+version = "3.0.1"
 description = "Tool to compare two folders"
 authors = ["skarfie123 <rahulpai@rocketmail.com>"]
 readme = "README.md"
