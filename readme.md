@@ -1,4 +1,4 @@
-# FolderCompare
+# compare-folders
 
 ![PyPI version](https://img.shields.io/pypi/v/compare-folders)
 ![PyPI downloads](https://img.shields.io/pypi/dm/compare-folders)
@@ -6,7 +6,11 @@
 
 ## Installation
 
-`pipx install compare-folders`
+It is recommended to install using `pipx`, but you can also use `pip`. See <https://pypi.org/project/pipx/>.
+
+```sh
+pipx install compare-folders
+```
 
 ## Usage
 

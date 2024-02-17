@@ -16,7 +16,7 @@ cli = typer.Typer(context_settings={"help_option_names": ["-h", "--help"]}, no_a
 def _main(
     source: Annotated[str, typer.Argument(help="target file structure")],
     destination: Annotated[str, typer.Argument(help="current file structure")],
-    output_file: Annotated[str, typer.Option("-o", "--output")] = f"FolderCompare_{NOW}.md",
+    output_file: Annotated[str, typer.Option("-o", "--output")] = f"compare-folders_{NOW}.md",
     append: Annotated[
         bool, typer.Option(help="whether to append to output file if it already exists")
     ] = True,
@@ -36,7 +36,7 @@ def _main(
         raise typer.Exit(1)
 
     with open(output_file, "a" if append else "w", encoding="utf-8") as f:
-        f.write(f"# Folder Compare {NOW}\n\n")
+        f.write(f"# compare-folders {NOW}\n\n")
 
         f.write(f"{source=}\n")
         f.write(f"{destination=}\n")
@@ -132,8 +132,7 @@ def _main(
         table.add_row(k, str(v))
     print(table)
 
-    if verbose:
-        print("\nWrote to file:", output_file)
+    print("\nWrote to file:", output_file)
 
 
 if __name__ == "__main__":

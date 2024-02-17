@@ -1,9 +1,10 @@
 [tool.poetry]
 name = "compare-folders"
-version = "3.0.1"
+version = "3.0.2"
 description = "Tool to compare two folders"
 authors = ["skarfie123 <rahulpai@rocketmail.com>"]
 readme = "README.md"
+repository = "https://github.com/skarfie123/compare-folders"
 
 [tool.poetry.dependencies]
 python = "^3.10"
