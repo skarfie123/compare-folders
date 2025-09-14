@@ -1,14 +1,17 @@
-[tool.poetry]
+[project]
 name = "compare-folders"
-version = "3.0.2"
+version = "3.1.0"
 description = "Tool to compare two folders"
-authors = ["skarfie123 <rahulpai@rocketmail.com>"]
+authors = [{ name = "skarfie123", email = "rahulpai@rocketmail.com" }]
 readme = "README.md"
-repository = "https://github.com/skarfie123/compare-folders"
+requires-python = ">=3.10"
+dependencies = ["typer>=0.17.0,<0.18.0"]
 
-[tool.poetry.dependencies]
-python = "^3.10"
-typer = { extras = ["all"], version = "^0.9.0" }
+[project.urls]
+Repository = "https://github.com/skarfie123/compare-folders"
+
+[project.scripts]
+compare-folders = "compare_folders.__main__:cli"
 
 [tool.poetry.group.dev]
 optional = true
@@ -23,9 +26,6 @@ black = "^23.9.1"
 [build-system]
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
-
-[tool.poetry.scripts]
-compare-folders = "compare_folders.__main__:cli"
 
 [tool.black]
 line-length = 100

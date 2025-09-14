@@ -4,5 +4,4 @@ __pycache__/
 *.md
 !README.md
 .vscode/
-poetry.lock
 dist/
