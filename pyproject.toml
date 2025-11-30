@@ -5,7 +5,7 @@ description = "Tool to compare two folders"
 authors = [{ name = "skarfie123", email = "rahulpai@rocketmail.com" }]
 readme = "README.md"
 requires-python = ">=3.10"
-dependencies = ["typer>=0.17.0,<0.18.0"]
+dependencies = ["typer~=0.20.0"]
 
 [project.urls]
 Repository = "https://github.com/skarfie123/compare-folders"
@@ -13,19 +13,18 @@ Repository = "https://github.com/skarfie123/compare-folders"
 [project.scripts]
 compare-folders = "compare_folders.__main__:cli"
 
-[tool.poetry.group.dev]
-optional = true
-
-[tool.poetry.group.dev.dependencies]
-bandit = "^1.7.5"
-pylama = "^8.4.1"
-flake8 = "^6.1.0"
-mypy = "^1.5.1"
-black = "^23.9.1"
-
 [build-system]
-requires = ["poetry-core>=1.0.0"]
-build-backend = "poetry.core.masonry.api"
+requires = ["uv_build>=0.9.13,<0.10.0"]
+build-backend = "uv_build"
+
+[dependency-groups]
+dev = [
+    "bandit~=1.7.5",
+    "pylama~=8.4.1",
+    "flake8~=6.1.0",
+    "mypy~=1.5.1",
+    "black~=25.11.0",
+]
 
 [tool.black]
 line-length = 100
