@@ -22,6 +22,13 @@ def _main(
     ] = True,
     verbose: Annotated[bool, typer.Option("-v", "--verbose")] = False,
 ):
+    if not os.path.exists(source):
+        typer.echo(f"source directory does not exist: {source}")
+        raise typer.Exit(1)
+    if not os.path.exists(destination):
+        typer.echo(f"destination directory does not exist: {destination}")
+        raise typer.Exit(1)
+
     stats = {
         "Missing Folder": 0,
         "Missing File": 0,
