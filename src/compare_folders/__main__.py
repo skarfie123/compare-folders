@@ -1,5 +1,5 @@
-import os
 from datetime import datetime
+from pathlib import Path
 from typing import Annotated
 
 import typer
@@ -14,19 +14,19 @@ cli = typer.Typer(context_settings={"help_option_names": ["-h", "--help"]}, no_a
 
 @cli.command()
 def _main(
-    source: Annotated[str, typer.Argument(help="target file structure")],
-    destination: Annotated[str, typer.Argument(help="current file structure")],
+    source: Annotated[Path, typer.Argument(help="target file structure")],
+    destination: Annotated[Path, typer.Argument(help="current file structure")],
     output_file: Annotated[str, typer.Option("-o", "--output")] = f"compare-folders_{NOW}.md",
     append: Annotated[
         bool, typer.Option(help="whether to append to output file if it already exists")
     ] = True,
     verbose: Annotated[bool, typer.Option("-v", "--verbose")] = False,
 ):
-    if not os.path.exists(source):
-        typer.echo(f"source directory does not exist: {source}")
+    if not source.exists() or not source.is_dir():
+        typer.echo(f"Source directory does not exist or is not a directory: {source}")
         raise typer.Exit(1)
-    if not os.path.exists(destination):
-        typer.echo(f"destination directory does not exist: {destination}")
+    if not destination.exists() or not destination.is_dir():
+        typer.echo(f"Destination directory does not exist or is not a directory: {destination}")
         raise typer.Exit(1)
 
     stats = {
@@ -39,7 +39,7 @@ def _main(
     }
 
     if not output_file:
-        typer.echo("output filename cannot be empty")
+        typer.echo("Output filename cannot be empty")
         raise typer.Exit(1)
 
     with open(output_file, "a" if append else "w", encoding="utf-8") as f:
@@ -51,86 +51,78 @@ def _main(
         f.write("\n## Missing\n\n")
 
         missing_dirs = set()
-        with Status("Checking missing files") as status:
-            for dirname, dirs, files in os.walk(source):
-                status.update(f"Checking directory for missing: {dirname}")
+        with Status("Checking for missing files and folders...") as status:
+            for path_in_source in source.rglob("*"):
+                relative_path = path_in_source.relative_to(source)
+                status.update(f"Checking missing: {relative_path}")
                 if verbose:
-                    print("Checking directory for missing:", dirname)
-                should_continue = False
-                for d in missing_dirs:
-                    if dirname.startswith(d):
-                        should_continue = True
-                        break
-                if should_continue:
+                    print(f"Checking missing: {relative_path}")
+
+                if any(relative_path.is_relative_to(p) for p in missing_dirs):
                     continue
-                for filename in files:
-                    path1 = os.path.join(dirname, filename)
-                    path2 = path1.replace(source, destination)
-                    if not os.path.exists(path2):
-                        f.write(f"Missing File {path2}\n")
-                        stats["Missing File"] += 1
-                for filename in dirs:
-                    path1 = os.path.join(dirname, filename)
-                    path2 = path1.replace(source, destination)
-                    if not os.path.exists(path2):
-                        f.write(f"Missing Folder {path2}\n")
+
+                path_in_dest = destination / relative_path
+
+                if not path_in_dest.exists():
+                    if path_in_source.is_dir():
+                        f.write(f"Missing Folder: {path_in_dest}\n")
                         stats["Missing Folder"] += 1
-                        missing_dirs.add(path1)
+                        missing_dirs.add(relative_path)
+                    else:
+                        f.write(f"Missing File: {path_in_dest}\n")
+                        stats["Missing File"] += 1
 
         f.write("\n## Modified\n\n")
 
-        with Status("Checking modified files") as status:
-            for dirname, dirs, files in os.walk(source):
-                status.update(f"Checking directory for modified: {dirname}")
-                if verbose:
-                    print("Checking directory for modified:", dirname)
-                should_continue = False
-                for d in missing_dirs:
-                    if dirname.startswith(d):
-                        should_continue = True
-                        break
-                if should_continue:
+        with Status("Checking for modified files...") as status:
+            for path_in_source in source.rglob("*"):
+                # We only care about files for modification check
+                if not path_in_source.is_file():
                     continue
-                for filename in files:
-                    path1 = os.path.join(dirname, filename)
-                    path2 = path1.replace(source, destination)
-                    if not os.path.exists(path2):
-                        pass
-                    elif os.stat(path1).st_mtime > os.stat(path2).st_mtime:
-                        f.write(f"Modified Newer {path1}\n")
+
+                relative_path = path_in_source.relative_to(source)
+                status.update(f"Checking modified: {relative_path}")
+                if verbose:
+                    print(f"Checking modified: {relative_path}")
+
+                # Skip if parent directory was missing
+                if any(relative_path.is_relative_to(p) for p in missing_dirs):
+                    continue
+
+                path_in_dest = destination / relative_path
+                if path_in_dest.is_file():
+                    source_mtime = path_in_source.stat().st_mtime
+                    dest_mtime = path_in_dest.stat().st_mtime
+                    if source_mtime > dest_mtime:
+                        f.write(f"Modified Newer: {path_in_source}\n")
                         stats["Modified Newer"] += 1
-                    elif os.stat(path1).st_mtime < os.stat(path2).st_mtime:
-                        f.write(f"Modified Older {path1}\n")
+                    elif source_mtime < dest_mtime:
+                        f.write(f"Modified Older: {path_in_source}\n")
                         stats["Modified Older"] += 1
 
         f.write("\n## Extra\n\n")
 
         extra_dirs = set()
-        with Status("Checking extra files") as status:
-            for dirname, dirs, files in os.walk(destination):
-                status.update(f"Checking directory for extras: {dirname}")
+        with Status("Checking for extra files and folders...") as status:
+            for path_in_dest in destination.rglob("*"):
+                relative_path = path_in_dest.relative_to(destination)
+                status.update(f"Checking extra: {relative_path}")
                 if verbose:
-                    print("Checking directory for extras:", dirname)
-                should_continue = False
-                for d in extra_dirs:
-                    if dirname.startswith(d):
-                        should_continue = True
-                        break
-                if should_continue:
+                    print(f"Checking extra: {path_in_dest}")
+
+                if any(relative_path.is_relative_to(p) for p in extra_dirs):
                     continue
-                for filename in files:
-                    path2 = os.path.join(dirname, filename)
-                    path1 = path2.replace(destination, source)
-                    if not os.path.exists(path1):
-                        f.write(f"Extra File {path2}\n")
-                        stats["Extra File"] += 1
-                for filename in dirs:
-                    path2 = os.path.join(dirname, filename)
-                    path1 = path2.replace(destination, source)
-                    if not os.path.exists(path1):
-                        f.write(f"Extra Folder {path2}\n")
+
+                path_in_source = source / relative_path
+
+                if not path_in_source.exists():
+                    if path_in_dest.is_dir():
+                        f.write(f"Extra Folder: {path_in_dest}\n")
                         stats["Extra Folder"] += 1
-                        extra_dirs.add(path2)
+                        extra_dirs.add(relative_path)
+                    else:
+                        f.write(f"Extra File: {path_in_dest}\n")
+                        stats["Extra File"] += 1
 
     table = Table(title="Stats")
     table.add_column("Stat", justify="right", style="cyan")
@@ -139,7 +131,7 @@ def _main(
         table.add_row(k, str(v))
     print(table)
 
-    print("\nWrote to file:", output_file)
+    print(f"\nWrote to file: {output_file}")
 
 
 if __name__ == "__main__":
