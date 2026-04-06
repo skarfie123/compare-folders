@@ -14,6 +14,8 @@ pipx install compare-folders
 
 ## Usage
 
+### Programmatically
+
 `compare-folders path\to\source path\to\destination`
 
 This will write a markdown file with:
@@ -25,3 +27,11 @@ This will write a markdown file with:
 It will also print a table of stats.
 
 Use `-o`/`--output` to override the output filename. If the output file already exists, the resulsts will be appended to the file, unless you specify `--no-append`, in which case the file will be overwritten.
+
+### GUI
+
+`compare-folders --gui`
+
+This will open a GUI where you can select the source and destination folders, and then click "Run Comparison" to see the results.
+
+Command line arguments are also supported in GUI mode, so you can specify the source and destination folders, and the output file, when launching the GUI.
