@@ -1,6 +1,6 @@
 [project]
 name = "compare-folders"
-version = "3.1.0"
+version = "3.2.0"
 description = "Tool to compare two folders"
 authors = [{ name = "skarfie123", email = "rahulpai@rocketmail.com" }]
 readme = "README.md"
